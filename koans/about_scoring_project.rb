@@ -29,33 +29,31 @@ require File.expand_path(File.dirname(__FILE__) + '/neo')
 #
 # Your goal is to write the score method.
 
+VALUES = {
+  1 => [1000, 100],
+  2 => [200, 0],
+  3 => [300, 0],
+  4 => [400, 0],
+  5 => [500, 50],
+  6 => [600, 0],
+}
+
+def count(value, set_score, single_score)
+  (value / 3) * set_score + (value % 3) * single_score
+end
+
 def score(dice)
   result = 0
-  pocket = []
-  dice.sort!
-  pocket << dice.shift
+  counts = [0,0,0,0,0,0]
   dice.each do |elem|
-    if pocket.length == 3
-      if 1 == pocket.first
-        result +=1000
-    else
-      result += pocket.first * 100
-    end
-    pocket.clear
-    pocket << elem
-
-    elsif elem in pocket
-      pocket << elem
-    else
-      if 1 == pocket.first
-        result += 100 * pocket.length
-        elsif 5 == pocket.first
-               result += 50 * pocket.length
-      end
-      pocket.clear
+    counts[elem-1]+=1
+  end
+  (0..5).each do | i |
+    result += count(counts[i], VALUES[i+1][0], VALUES[i+1][1])
   end
   result
 end
+
 
 class AboutScoringProject < Neo::Koan
   def test_score_of_an_empty_list_is_zero
